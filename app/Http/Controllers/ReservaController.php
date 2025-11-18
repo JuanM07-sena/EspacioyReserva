@@ -85,21 +85,24 @@ class ReservaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Reserva $reserva)
+ public function update(Request $request, Reserva $reserva)
     {
-        
-        $data = $request->validate([
-            'espacio_id' => 'required|exists:espacios,id',
-            'solicitante' => 'required|string|max:255',
-            'fecha' => 'required|date',
-            'hora_inicio' => 'required|date_format:H:i',
-            'hora_fin' => 'required|date_format:H:i',
-            'motivo' => 'nullable|string',
-        ]);
-    
-        $reserva->update($data);
-       return redirect()->route('reservas.index')->with('ok','Reserva actualizada correctamente.');
-}
+    $data = $request->validate([
+        'espacio_id' => ['required','exists:espacios,id'],
+        'solicitante' => ['required','string','max:255'],
+        'fecha' => ['required','date'],
+        'hora_inicio' => ['required'],
+        'hora_fin' => ['required', 'after:hora_inicio'],
+        'motivo' => ['nullable','string']
+    ]);
+
+    $data['hora_inicio'] = date('H:i:s', strtotime($request->hora_inicio));
+    $data['hora_fin']    = date('H:i:s', strtotime($request->hora_fin));
+
+    $reserva->update($data);
+
+    return redirect()->route('reservas.index')->with('ok', 'Reserva actualizada.');
+    }
 
     /**
      * Remove the specified resource from storage.

@@ -13,3 +13,10 @@ Route::get('/', function(){return redirect()->route('espacios.index');
 });
 Route::resource('espacios', EspacioController::class);
 Route::resource('reservas', ReservaController::class);
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
