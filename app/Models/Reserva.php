@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Reserva extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'espacio_id','solicitante','fecha','hora_inicio','hora_fin','motivo'];
+
+        public function espacio(){
+            return $this->belongsTo(Espacio::class);
+        }
 }

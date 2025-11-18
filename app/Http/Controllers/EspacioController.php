@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Reserva;
+use App\Models\Espacio;
 use Illuminate\Http\Request;
 
 class EspacioController extends Controller
@@ -13,7 +15,8 @@ class EspacioController extends Controller
      */
     public function index()
     {
-        //
+         $espacios= Espacio::paginate(10);
+        return view('espacios.index',compact('espacios'));
     }
 
     /**
@@ -23,7 +26,7 @@ class EspacioController extends Controller
      */
     public function create()
     {
-        //
+        return view('espacios.create');
     }
 
     /**
@@ -33,8 +36,17 @@ class EspacioController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        //
+{
+$data = $request->validate([
+'nombre' => 'required|string|max:255',
+'tipo' => 'required|string|max:255',
+'capacidad' => 'required|integer|min:1',
+'ubicacion' => 'required|string|max:255',
+]);
+
+
+Espacio::create($data);
+return redirect()->route('espacios.index')->with('success','Espacio creado correctamente.');
     }
 
     /**
@@ -54,9 +66,10 @@ class EspacioController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Espacio $espacio)
     {
-        //
+        
+       return view('espacios.edit', compact('espacio'));
     }
 
     /**
@@ -66,10 +79,18 @@ class EspacioController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Espacio $espacio)
     {
-        //
-    }
+        $data = $request->validate([
+            'nombre'=> 'required|string|max:255',
+            'tipo'=> 'required|string|max:255',
+            'capacidad'=> 'required|integer|min:1',
+            'ubicacion'=> 'required|string|max:255',
+        ]);
+        $espacio->update($data);
+        return redirect()->route('espacios.index')->with('success','Espacio actualizado correctamente.');
+}
+
 
     /**
      * Remove the specified resource from storage.
@@ -77,8 +98,9 @@ class EspacioController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Espacio $espacio)
     {
-        //
+      $espacio->delete();
+      return redirect()->route('espacios.index')->with('success','Espacio eliminado.');
     }
 }

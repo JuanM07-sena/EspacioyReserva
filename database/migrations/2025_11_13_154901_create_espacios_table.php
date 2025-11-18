@@ -15,10 +15,10 @@ class CreateEspaciosTable extends Migration
     {
         Schema::create('espacios', function (Blueprint $table) {
            $table->id();
-            $table->string('nombre')->require();
-            $table->string('tipo')->require();
-            $table->unsignedInteger('capacidad' )->require();
-            $table->string('ubicacion')->require();
+            $table->string('nombre', 255);
+            $table->string('tipo', 255);
+            $table->integer('capacidad' )->unsigned();
+            $table->string('ubicacion', 255)->nullable();
             $table->timestamps();
             
         });

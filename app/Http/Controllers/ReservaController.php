@@ -1,6 +1,7 @@
 <?php
-
 namespace App\Http\Controllers;
+use App\Models\Reserva;
+use App\Models\Espacio;
 
 use Illuminate\Http\Request;
 
@@ -13,7 +14,8 @@ class ReservaController extends Controller
      */
     public function index()
     {
-        //
+       $reservas=Reserva::paginate(10);
+        return view('reservas.index',compact('reservas'));
     }
 
     /**
@@ -23,7 +25,8 @@ class ReservaController extends Controller
      */
     public function create()
     {
-        //
+       $espacios = Espacio::orderBy('nombre')->get();
+        return view('reservas.create', compact('espacios'));
     }
 
     /**
@@ -34,10 +37,24 @@ class ReservaController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $data = $request->validate([
+            'solicitante' => 'required|string|max:255',
+            'espacio_id' => 'required|exists:espacios,id',
+            'hora_fin' => 'required|date_format:H:i',
+            'hora_inicio' => 'required|date_format:H:i',
+            'fecha' => 'required|date',
+            'motivo' => 'nullable|string',
+        ]);
+
+
+        Reserva::create($data);
+        return redirect()->route('reservas.index')->with('ok','Reserva creada correctamente.');
+        }
+        
 
     /**
+
+     * 
      * Display the specified resource.
      *
      * @param  int  $id
@@ -54,9 +71,11 @@ class ReservaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Reserva $reserva)
     {
-        //
+        
+        $espacios = Espacio::orderBy('nombre')->get();
+        return view('reservas.edit', compact('reserva', 'espacios'));
     }
 
     /**
@@ -66,10 +85,21 @@ class ReservaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Reserva $reserva)
     {
-        //
-    }
+        
+        $data = $request->validate([
+            'espacio_id' => 'required|exists:espacios,id',
+            'solicitante' => 'required|string|max:255',
+            'fecha' => 'required|date',
+            'hora_inicio' => 'required|date_format:H:i',
+            'hora_fin' => 'required|date_format:H:i',
+            'motivo' => 'nullable|string',
+        ]);
+    
+        $reserva->update($data);
+       return redirect()->route('reservas.index')->with('ok','Reserva actualizada correctamente.');
+}
 
     /**
      * Remove the specified resource from storage.
@@ -77,8 +107,10 @@ class ReservaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Reserva $reserva)
     {
-        //
+        
+        $reserva->delete();
+        return redirect()->route('reservas.index')->with('ok','Reserva eliminada.');
     }
 }

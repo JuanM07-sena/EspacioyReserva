@@ -15,11 +15,12 @@ class CreateReservasTable extends Migration
     {
         Schema::create('reservas', function (Blueprint $table) {
             $table->id();
-            $table->();
-            $table->id();
-            $table->id();
-            $table->id();
-            $table->id();
+            $table->foreignId('espacio_id')->constrained('espacios')->onDelete('cascade');
+            $table->string('solicitante', 255);
+            $table->date('fecha');
+            $table->time('hora_inicio');
+            $table->time('hora_fin');
+            $table->text('motivo')->nullable();
             $table->timestamps();
         });
     }
